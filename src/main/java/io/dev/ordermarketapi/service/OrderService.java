@@ -23,7 +23,7 @@ public class OrderService {
 		var marketplaceUUID = UUID.randomUUID().toString().substring(0, 10).replace("-", "").toUpperCase();
 
 		order.setMarketplaceId("%s-%s".formatted(marketplaceFlag, marketplaceUUID));
-		order.setStatus(OrderStatus.PENDING);
+		order.setStatus(OrderStatus.PAID_WAITING_SHIP);
 
 		return orderRepository.save(order);
 	}
@@ -39,7 +39,7 @@ public class OrderService {
 
 	public Order invoiceOrder(UUID uuid) {
 
-		Order order = this.findByUUID(uuid);
+		Order order = findByUUID(uuid);
 
 		if (order.getStatus() != OrderStatus.PAID_WAITING_SHIP) {
 			throw new IllegalStateException("Order cannot be invoiced from status: " + order.getStatus());
@@ -47,7 +47,9 @@ public class OrderService {
 
 		order.setStatus(OrderStatus.INVOICED);
 
-		return this.save(order);
+		var orderInvoiced = orderRepository.save(order);
+
+		return orderInvoiced;
 
 	}
 
