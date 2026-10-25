@@ -10,7 +10,9 @@ import io.dev.ordermarketapi.exception.OrderNotFoundException;
 import io.dev.ordermarketapi.model.Order;
 import io.dev.ordermarketapi.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -36,6 +38,10 @@ public class OrderService {
 		return orderRepository.findById(uuid)
 				.orElseThrow(() -> new OrderNotFoundException("Order not found with UUID: " + uuid));
 	}
+	
+	public List<Order> findByStatus(OrderStatus orderStatus){
+		return orderRepository.findByStatus(orderStatus);
+	}
 
 	public Order invoiceOrder(UUID uuid) {
 
@@ -45,6 +51,7 @@ public class OrderService {
 			throw new IllegalStateException("Order cannot be invoiced from status: " + order.getStatus());
 		}
 
+		log.info("📦 [INVOICE] Iniciando processo de faturamento para o pedido com UUID: {}", uuid);
 		order.setStatus(OrderStatus.INVOICED);
 
 		var orderInvoiced = orderRepository.save(order);

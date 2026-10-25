@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.dev.ordermarketapi.dto.OrderRequestDto;
+import io.dev.ordermarketapi.enums.OrderStatus;
 import io.dev.ordermarketapi.mapper.OrderMapper;
 import io.dev.ordermarketapi.model.Order;
 import io.dev.ordermarketapi.service.OrderService;
@@ -47,8 +49,17 @@ public class OrderController {
 
 	@GetMapping("/{uuid}")
 	public ResponseEntity<Order> findByUUID(@PathVariable UUID uuid) {
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(orderService.findByUUID(uuid));
+		return ResponseEntity.status(HttpStatus.OK).body(orderService.findByUUID(uuid));
+	}
+
+	@Operation(summary = "Listar pedidos por status", description = "Retorna uma lista de pedidos filtrados pelo status informado (ex: PAID_WAITING_SHIP, INVOICED).")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Pedidos encontrados com sucesso", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Order.class))),
+			@ApiResponse(responseCode = "400", description = "Status inválido fornecido", content = @Content) })
+	@GetMapping("/status/{orderStatus}")
+	public ResponseEntity<List<Order>> getOrdersByStatus(@PathVariable OrderStatus orderStatus) {
+		List<Order> orders = orderService.findByStatus(orderStatus);
+		return ResponseEntity.ok(orders);
 	}
 
 	@PostMapping
