@@ -24,6 +24,7 @@ public record OrderRequestDto (
 		@NotBlank
 		String document,
 
+		@NotNull
 		@Positive
 		BigDecimal total
 
