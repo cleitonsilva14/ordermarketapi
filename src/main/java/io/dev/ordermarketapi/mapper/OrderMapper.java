@@ -1,6 +1,7 @@
 package io.dev.ordermarketapi.mapper;
 
 import io.dev.ordermarketapi.dto.OrderRequestDto;
+import io.dev.ordermarketapi.dto.OrderResponseDto;
 import io.dev.ordermarketapi.model.Order;
 
 public class OrderMapper {
@@ -18,6 +19,19 @@ public class OrderMapper {
 
 
 		return order;
+	}
+
+	public static OrderResponseDto mapToOrderResponse(Order order) {
+		return new OrderResponseDto(
+				order.getOrderId(),
+				order.getMarketplaceId(),
+				order.getMarketPlace(),
+				order.getCreatedAt(),
+				order.getStatus(),
+				order.getBuyerName(),
+				order.getDocumentType(),
+				order.getDocument(),
+				order.getTotal());
 	}
 
 }
